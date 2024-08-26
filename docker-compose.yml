@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: frontend
+#      Dockerfile: frontend/Dockerfile
+    ports:
+      - 80:3000
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: backend
+ #     Dockerfile: backend/Dockerfile
+    environment:
+      ACCESS_TOKEN_SECRET: itissecret
+      REFRESH_TOKEN_SECRET: itisalsosecret
+      MONGODB_URL: mongodb://root:example@mongo/mern?authSource=admin
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      -  27017:27017
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
